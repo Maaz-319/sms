@@ -1,9 +1,5 @@
 # School Management System - User Manual
 
-**Version**: 2.0.0  
-**Last Updated**: July 2025  
-**Architecture**: Unified Person-based System
-
 ## Table of Contents
 1. [Introduction](#introduction)
 2. [Installation](#installation)
@@ -36,17 +32,10 @@ All classes share the same ID system and common interface while providing type-s
 
 ## Installation
 
-### Prerequisites
-- C++ compiler with C++11 support (GCC 7.0+, Clang 6.0+, or MSVC 2017+)
-- Windows, Linux, or macOS
-- Console/terminal access
-
-### Building from Source
-
 #### Quick Build
 ```bash
 # Navigate to project directory
-cd school-management-system
+cd sms
 mkdir build
 
 # Compile main application
@@ -56,13 +45,6 @@ g++ -std=c++11 -Iinclude src/*.cpp -o build/sms.exe
 g++ -std=c++11 -Iinclude tests/UnitTest.cpp src/Person.cpp src/Student.cpp src/Teacher.cpp src/Staff.cpp src/Utility.cpp -o build/UnitTest.exe
 g++ -std=c++11 -Iinclude tests/IntegrationTest.cpp src/*.cpp -o build/IntegrationTest.exe
 ```
-
-## Getting Started
-
-### First Time Setup
-1. **Build the Application**: Follow installation instructions above
-2. **Run Tests** (Recommended): Verify everything works correctly
-3. **Launch Main Application**: Start using the system
 
 ### Running Tests
 ```bash
@@ -188,16 +170,7 @@ The system automatically creates and manages data files:
 - `data/staff.txt` - Staff records
 
 ### Data Format
-All records use a consistent pipe-separated format:
-```
-ID|Name|Age|Phone|Address|[Type-specific fields]
-```
-
-### Data Persistence
-- **Automatic Save**: Data is saved after each operation
-- **Load on Startup**: Previous data is automatically loaded
-- **Cross-Platform**: Works on Windows, Linux, and macOS
-- **Error Handling**: Graceful handling of file access issues
+All records use a consistent ` separated format.
 
 ### ID Management
 - **Unique IDs**: All persons get unique IDs starting from 1000
@@ -229,7 +202,7 @@ ID|Name|Age|Phone|Address|[Type-specific fields]
 
 **Error**: "Invalid input"
 - **Solution**: Follow input prompts carefully
-- **Note**: Phone numbers should be in format "XXX-XXXX" or similar
+- **Note**: Phone numbers should be in format "03XXXXXXXXX" or similar
 
 #### Data Issues
 **Problem**: "Lost data after restart"
@@ -260,6 +233,6 @@ ls -la data/
 
 ---
 
-**End of User Manual**
-
 For technical details and development information, see `API.md` and `DeveloperGuide.md`.
+
+> This Documentation is AI Gen, So Misatakes are Possible !

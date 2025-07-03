@@ -1,9 +1,5 @@
 # School Management System - API Documentation
 
-**Version**: 2.0.0  
-**Last Updated**: July 2025  
-**Architecture**: Unified Person-based System
-
 ## Overview
 Simple API documentation for the School Management System with unified Person architecture.
 
@@ -33,7 +29,7 @@ protected:
     string name;      // Person's name
     int age;          // Person's age
     string phone;     // Phone number
-    string address;   // Address
+    string address;   // Physical Address
     string type;      // "Student", "Teacher", or "Staff"
 ```
 
@@ -77,7 +73,7 @@ Represents a student. Uses unified ID system - no separate student ID needed.
 ### Methods
 ```cpp
 // Constructor/Destructor
-Student();          // Creates student, sets type to "Student"
+Student();          // Creates student, sets type to "Student", increase count
 ~Student();          // Cleans up, decrements count
 
 // Overridden Methods
@@ -165,36 +161,10 @@ Person** read_person(int* ids, int& current_id);   // Load all data from files
 
 ### Description
 - Saves/loads data to `data/students.txt`, `data/teachers.txt`, `data/staff.txt`
-- Uses unified format with pipe (`|`) separators
+- Uses unified format with ` separators
 - Auto-creates data directory if needed
 
-## Utility Functions
-
-### Console Display
-```cpp
-static void print_header(const string& title);    // Print formatted header
-static void print_success_message(const string& msg); // Green success message
-static void print_error_message(const string& msg);   // Red error message
-static void print_menu_box(const string& title, const vector<string>& options); // Menu display
-static void print_line(int length = 50);          // Print line separator
-static void print_dashed_line(int length = 50);   // Print dashed line
-static void print_info_box(const string& message); // Info message box
-```
-
-### Color Support
-```cpp
-static void set_console_color(int color);         // Set text color (Windows)
-static void reset_console_color();                // Reset to default
-```
-
-### Input Validation
-```cpp
-static int take_integer_input(int min, int max, const string& prompt); // Validated integer
-static string take_string_input(const string& prompt);                 // String input
-static string take_phone_input();                                      // Phone validation
-```
-
-## Global Functions
+## Main File Functions
 
 ### ID Management
 ```cpp
@@ -211,40 +181,4 @@ void display_system_stats(); // Show counts and statistics
 void main_menu();        // Main application loop
 ```
 
-## Usage Examples
-
-### Basic Usage
-```cpp
-// Create objects
-Student student;
-student.setName("John Doe");
-student.setAge(20);
-student.setId(give_id());  // Auto-generate ID
-
-Teacher teacher;
-teacher.setName("Dr. Smith");
-teacher.setAge(35);
-teacher.setId(give_id());
-teacher.setSubject("Math");
-
-// Polymorphic array
-Person* people[2] = {&student, &teacher};
-for(int i = 0; i < 2; i++) {
-    people[i]->printDetails();  // Calls correct version
-}
-```
-
-### File Operations
-```cpp
-Person** data = new Person*[100];
-// ... add data ...
-save_person(data);  // Save to files
-
-int ids[100];
-int current_id;
-Person** loaded = read_person(ids, current_id);  // Load from files
-```
-
----
-
-**End of API Documentation**
+> This Documentation is AI Gen, So Misatakes are Possible !
