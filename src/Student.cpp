@@ -60,7 +60,6 @@ bool Student::save(Person **data, int index)
 int Student::getCount() { return count; }
 void Student::get_specific_inputs() {
     // Students don't need additional specific inputs beyond common ones
-    // The ID is already set in add_person()
 }
 
 

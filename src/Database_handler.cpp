@@ -23,7 +23,6 @@ void ensureDataDirectory()
     struct stat info;
     if (stat("../data", &info) != 0)
     {
-        // Directory doesn't exist, create it
         mkdir("../data", 0755);
     }
 }
@@ -93,16 +92,14 @@ Person **read_person(int *ids, int &current_id)
         ids[i] = 0;
     }
 
-    // Fix: Read from data folder instead of root directory
     ifstream file_stud("../data/students.txt");
     ifstream file_teach("../data/teachers.txt");
     ifstream file_staff("../data/staff.txt");
 
-    // If files don't exist (first run), create empty files and return empty data
     if (!file_stud.is_open() || !file_teach.is_open() || !file_staff.is_open())
     {
         cout << "Data files not found. Starting with empty database." << endl;
-        return data; // Return empty data array instead of nullptr
+        return data;
     }
 
     string line;
@@ -119,7 +116,7 @@ Person **read_person(int *ids, int &current_id)
 
         if (pos1 == string::npos || pos2 == string::npos || pos3 == string::npos || pos4 == string::npos)
         {
-            continue; // Skip malformed lines
+            continue;
         }
 
         name = line.substr(0, pos1);

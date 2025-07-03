@@ -195,7 +195,6 @@ project-root/
 - **Directory Auto-Creation**: Data directory created automatically if missing
 - **Type-Safe Storage**: Each type maintains separate file while using unified ID system
 - **Capacity Management**: Maximum 100 total records across all types
-- **Cross-Platform Paths**: Works on Windows, Linux, and macOS
 
 ### Important Notes
 - **Run from build/ directory**: `cd build && ./sms.exe` (recommended)

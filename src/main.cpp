@@ -45,7 +45,6 @@ int give_id()
         }
     }
 
-    // Find first available slot in ids array
     for (int i = 0; i < 100; i++)
     {
         if (ids[i] == 0)
@@ -108,10 +107,8 @@ void add_person()
     }
     Utility::print_success_message("ID assigned: " + to_string(id));
     getch();
-    // delete person; // Free memory after saving
 }
 
-// FUNCTIONS FOR GET DATA
 void get_person_data()
 {
     Person *person = nullptr;
@@ -130,13 +127,11 @@ void get_person_data()
     person = data[index];
     person->printDetails();
     getch();
-    // delete person;
 }
 
-// FUNCTIONS FOR MODIFY DATA
 void modify_person()
 {
-    Person *person = nullptr; // Initialize to nullptr
+    Person *person = nullptr;
     int id, index = 0;
 
     Utility::print_header("MODIFY PERSON DATA");
@@ -163,7 +158,6 @@ void modify_person()
         Utility::print_success_message(person->printType() + " modified successfully.");
     }
     getch();
-    // delete person;
 }
 
 void display_system_stats()
@@ -218,7 +212,6 @@ void delete_person()
         return;
     }
 
-    // Delete the person
     string person_type = person->printType();
     delete data[index];
     data[index] = nullptr;
@@ -227,7 +220,6 @@ void delete_person()
     getch();
 }
 
-// MAIN MENU
 void main_menu()
 {
     char choice;

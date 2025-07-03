@@ -17,7 +17,6 @@ void Utility::set_console_color(int color)
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hConsole, color);
 #else
-    // For Linux/Mac (ANSI escape codes)
     switch(color) {
         case 0: cout << "\033[30m"; break;  // Black
         case 1: cout << "\033[34m"; break;  // Dark Blue
@@ -35,7 +34,7 @@ void Utility::set_console_color(int color)
         case 13: cout << "\033[95m"; break; // Magenta
         case 14: cout << "\033[93m"; break; // Yellow
         case 15: cout << "\033[97m"; break; // White
-        default: cout << "\033[37m"; break; // Default to white
+        default: cout << "\033[37m"; break; // white
     }
 #endif
 }
@@ -44,9 +43,9 @@ void Utility::reset_console_color()
 {
 #ifdef _WIN32
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(hConsole, 7); // Light Gray (default)
+    SetConsoleTextAttribute(hConsole, 7);
 #else
-    cout << "\033[0m"; // Reset to default
+    cout << "\033[0m";
 #endif
 }
 
@@ -149,15 +148,15 @@ void Utility::print_info_box(const string &message)
 int Utility::take_integer_input(int min, int max, string prompt)
 {
     int variable;
-    bool valid = false;  // Start with false, continue until valid
+    bool valid = false;
     
-    while (!valid)  // Continue while NOT valid
+    while (!valid)
     {
         cout << "Enter " << prompt << " (" << min << " - " << max << "): ";
         if (!(cin >> variable))
         {
             Utility::print_error_message("Invalid input. Please enter a number.");
-            cin.clear(); // Clear the error flag
+            cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Clear the input buffer
         }
         else if (variable < min || variable > max)
@@ -167,7 +166,7 @@ int Utility::take_integer_input(int min, int max, string prompt)
         }
         else
         {
-            valid = true; // Input is valid, exit loop
+            valid = true;
             cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Clear any remaining input
         }
     }
@@ -177,9 +176,9 @@ int Utility::take_integer_input(int min, int max, string prompt)
 string Utility::take_phone_input()
 {
     string variable;
-    bool valid = false;  // Start with false, continue until valid
-    
-    while (!valid)  // Continue while NOT valid
+    bool valid = false;
+
+    while (!valid)
     {
         cout << "Enter 11 digit phone number (03XXXXXXXXX): ";
         cin >> variable;
@@ -192,8 +191,8 @@ string Utility::take_phone_input()
         }
         else
         {
-            valid = true; // Input is valid, exit loop
-            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Clear any remaining input
+            valid = true;
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
         }
     }
     return variable;
@@ -207,7 +206,6 @@ string Utility::take_string_input(string prompt)
     {
         cout << "Enter " << prompt << ": ";
         
-        // Check if there's anything in the input buffer and clear it
         if (cin.peek() == '\n') {
             cin.ignore();
         }

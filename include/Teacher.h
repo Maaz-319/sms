@@ -7,7 +7,7 @@ private:
     string subject;
     static int count;
 public:
-    Teacher();  // Default constructor
+    Teacher();
     void printDetails() override;
     int get_by_id(int id, Person **data) override;
     bool save(Person **data, int index = -1);

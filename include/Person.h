@@ -7,14 +7,14 @@ class Person {
 private:
     static int count;
 protected:
-    int id;  // Unique identifier for each person
+    int id;
     string name;
     int age;
     string type;
     string phone;
     string address;
 public:
-    Person();  // Default constructor
+    Person();
     virtual void printDetails() = 0;
     
     // Getters
@@ -39,7 +39,7 @@ public:
     virtual void setDesignation(const string& designation) {}  // For Staff
 
     virtual void get_common_inputs();
-    virtual void get_specific_inputs() = 0;  // Pure virtual function for derived classes to implement
+    virtual void get_specific_inputs() = 0;
     static int get_person_by_id(int id, Person **data);
     virtual int get_by_id(int id, Person **data) = 0;
 

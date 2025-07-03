@@ -1,256 +1,196 @@
 # School Management System - Developer Guide
 
-## Table of Contents
-1. [Development Environment Setup](#development-environment-setup)
-2. [Project Architecture](#project-architecture)
-3. [Code Organization](#code-organization)
-4. [Class Design Patterns](#class-design-patterns)
-5. [Build System](#build-system)
-6. [Testing Framework](#testing-framework)
-7. [Contributing Guidelines](#contributing-guidelines)
-8. [Debugging Guidelines](#debugging-guidelines)
-9. [Code Examples](#code-examples)
-10. [Future Enhancements](#future-enhancements)
+**Version**: 2.0.0  
+**Last Updated**: July 2025  
+**Architecture**: Unified Person-based System
+
+## Quick Start for Developers
+
+### Requirements
+- C++11 or later compiler (GCC, Clang, MSVC)
+- Console/terminal access
+- Basic knowledge of OOP concepts
+
+### Setup
+```bash
+git clone <repository>
+cd school-management-system
+mkdir build
+g++ -std=c++11 -Iinclude src/*.cpp -o build/sms.exe
+```
+
+## Project Architecture
+
+### Unified Design Philosophy
+The system uses a **single inheritance hierarchy** with unified ID management:
+
+```
+Person (Abstract Base)
+├── Student (No additional IDs)
+├── Teacher (+ subject field)
+└── Staff (+ designation field)
+```
+
+### Key Design Principles
+1. **One ID System**: All persons use `Person::id` (no separate IDs per type)
+2. **Polymorphism**: Virtual functions handle type-specific behavior
+3. **Static Counting**: Each class tracks its own instances
+4. **File Persistence**: Unified save/load for all types
+
+## Code Organization
+
+### Directory Structure
+```
+src/
+├── main.cpp              # Application entry point
+├── Person.cpp            # Base class implementation
+├── Student.cpp           # Student class
+├── Teacher.cpp           # Teacher class
+├── Staff.cpp             # Staff class
+├── Database_handler.cpp  # File I/O operations
+└── Utility.cpp           # Helper functions
+
+include/
+├── Person.h              # Base class header
+├── Student.h             # Student header
+├── Teacher.h             # Teacher header
+├── Staff.h               # Staff header
+├── Database_handler.h    # File I/O header
+└── Utility.h             # Helper functions header
+
+tests/
+├── UnitTest.cpp          # Component testing
+└── IntegrationTest.cpp   # System testing
+```
+
+### Core Classes
+
+#### Person (Abstract Base)
+```cpp
+class Person {
+protected:
+    int id;              // Unified ID for all types
+    string name, phone, address;
+    int age;
+    string type;         // "Student", "Teacher", "Staff"
+public:
+    // Pure virtual methods
+    virtual void printDetails() = 0;
+    virtual void get_specific_inputs() = 0;
+    virtual int get_by_id(int id, Person** data) = 0;
+    
+    // Common methods
+    void get_common_inputs();  // Gets name, age, phone, address
+    int getId(), setId(int);   // Unified ID management
+    // ... other getters/setters
+};
+```
+
+#### Derived Classes
+- **Student**: Uses only inherited features (no additional attributes)
+- **Teacher**: Adds `string subject` for teaching subject
+- **Staff**: Adds `string designation` for job role
 
 ## Development Environment Setup
 
-### Required Tools
-- **C++ Compiler**: GCC 7.0+ with C++17 support (recommended: tdm64-1 10.3.0)
-- **Git**: For version control
-- **IDE/Editor**: Visual Studio Code, CLion, Code::Blocks, or any C++ compatible editor
+### Build Configuration
+```bash
+# Main application
+g++ -std=c++11 -Iinclude src/*.cpp -o build/sms.exe
 
-### Development Dependencies
-- **Standard Libraries**: C++17 (for filesystem support in tests)
-- **Console I/O**: Standard iostream, conio.h for interactive features
-- **File System**: Standard C++ filesystem library for integration tests
+# Unit tests
+g++ -std=c++11 -Iinclude tests/UnitTest.cpp src/Person.cpp src/Student.cpp src/Teacher.cpp src/Staff.cpp src/Utility.cpp -o build/UnitTest.exe
 
-### Project Dependencies
-No external libraries required - the project uses only standard C++ libraries.
+# Integration tests
+g++ -std=c++11 -Iinclude tests/IntegrationTest.cpp src/*.cpp -o build/IntegrationTest.exe
+```
 
-### IDE Configuration
+### IDE Setup
 
 #### Visual Studio Code
-1. Install C/C++ extension by Microsoft
-2. Configure `tasks.json` for building:
-```json
-{
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "Build Main App",
-            "type": "shell",
-            "command": "g++",
-            "args": [
-                "-std=c++17",
-                "-I", "include",
-                "-o", "build/sms.exe",
-                "src/start.cpp",
-                "src/Person.cpp",
-                "src/Student.cpp", 
-                "src/Teacher.cpp",
-                "src/Staff.cpp",
-                "src/Utility.cpp",
-                "src/Database_handler.cpp"
-            ],
-            "group": "build",
-            "presentation": {
-                "echo": true,
-                "reveal": "always"
-            }
-        }
-    ]
-}
-```
-
-3. Configure `launch.json` for debugging:
-```json
-{
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "Debug SMS",
-            "type": "cppdbg",
-            "request": "launch",
-            "program": "${workspaceFolder}/build/sms.exe",
-            "args": [],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
-            "environment": [],
-            "externalConsole": true,
-            "MIMode": "gdb",
-            "miDebuggerPath": "gdb"
-        }
-    ]
-}
-```
-```
+1. Install C++ extension
+2. Configure tasks.json for building
+3. Configure launch.json for debugging
 
 #### CLion
 1. Open project root directory
 2. Configure C++ compiler settings
 3. Configure run configurations for main and test executables
 
-## Project Architecture
+## Architecture Details
 
-### Design Patterns
+### Design Patterns Used
 
-#### 1. Inheritance Hierarchy (Template Method Pattern)
+#### 1. Inheritance Hierarchy
 ```
 Person (Abstract Base Class)
 ├── Student (Concrete Implementation)
-├── Teacher (Concrete Implementation)
-└── Staff (Concrete Implementation)
+├── Teacher (Concrete Implementation - adds subject)
+└── Staff (Concrete Implementation - adds designation)
 ```
 
-#### 2. Static Factory Pattern
+#### 2. Template Method Pattern
+- `printDetails()` - Pure virtual method with type-specific implementations
+- `get_specific_inputs()` - Virtual method for type-specific data input
+- Common interface with specialized behavior
+
+#### 3. Static Factory Pattern
 - Static counting mechanism in each class
 - Static methods for object tracking and retrieval
+- Unified ID generation system
 
-#### 3. Utility Pattern (Static Methods)
-- `Utility`: Static helper functions for console formatting
-- No instantiation required - all methods are static
+### Key Classes and Responsibilities
 
-#### 4. Template Method Pattern
-- `printDetails()` - Pure virtual method implemented differently by each derived class
-- Common interface with specialized implementations
-
-### Class Responsibilities
-
-#### Person Class (Abstract Base)
-- **Purpose**: Abstract base class defining common interface
-- **Responsibilities**:
-  - Common attribute management (name, age, phone, address, type)
-  - Pure virtual `printDetails()` method
-  - Virtual polymorphic methods (`printType()`, `getId()`)
-  - Static counting of all Person-derived objects
-  - Virtual setters for derived class attributes (empty implementations)
+#### Person (Abstract Base)
+- **Purpose**: Common interface and shared functionality
+- **Key Features**:
+  - Unified ID system (`Person::id`)
+  - Common attributes (name, age, phone, address, type)
+  - Pure virtual methods for polymorphism
+  - Static count management
 
 #### Student Class
-- **Purpose**: Represents students in the system
-- **Responsibilities**:
-  - Student-specific ID management (`stud_id`)
-  - Implementation of abstract methods from Person
-  - Static counting of Student objects
-  - Database operations (save, get_by_id)
-  - Type identification as "Student"
+- **Purpose**: Student entity management
+- **Key Features**:
+  - Inherits all Person functionality
+  - No additional attributes (demonstrates pure inheritance)
+  - Implements required virtual methods
 
 #### Teacher Class
-- **Purpose**: Represents teachers in the system
-- **Responsibilities**:
-  - Teacher-specific attributes (teacher_id, subject)
-  - Implementation of abstract methods from Person
-  - Static counting of Teacher objects  
-  - Database operations (save, get_by_id)
-  - Type identification as "Teacher"
+- **Purpose**: Teacher entity management  
+- **Key Features**:
+  - Adds subject management
+  - Subject-specific input/output handling
+  - Maintains unified ID system
 
 #### Staff Class
-- **Purpose**: Represents administrative staff
-- **Responsibilities**:
-  - Staff-specific attributes (staff_id, designation)
-  - Implementation of abstract methods from Person
-  - Static counting of Staff objects
-  - Database operations (save, get_by_id)
-  - Type identification as "Staff"
-
-#### Utility Class
-- **Purpose**: Console formatting and display utilities
-- **Responsibilities**:
-  - Line and header formatting (`print_line`, `print_header`)
-  - Menu box display (`print_menu_box`)
-  - Message formatting (success, error, info messages)
-  - No instantiation (constructor deleted)
+- **Purpose**: Staff entity management
+- **Key Features**:
+  - Adds designation management
+  - Designation-specific input/output handling
+  - Maintains unified ID system
 
 #### Database Handler
-- **Purpose**: File-based data persistence
-- **Responsibilities**:
-  - Save Person arrays to files (`save_person`)
-  - Read Person objects from files (`read_person`)
-  - File organization by type (students.txt, teachers.txt, staff.txt)
-
-#### Student Class
-- **Purpose**: Represents student entities
-- **Responsibilities**:
-  - Student-specific attributes (grade, GPA)
-  - Academic record management
-  - Grade validation logic
-
-#### Teacher Class
-- **Purpose**: Represents teaching staff
-- **Responsibilities**:
-  - Subject assignment management
-  - Salary information handling
-  - Teaching-specific validation
-
-#### Staff Class
-- **Purpose**: Represents administrative staff
-- **Responsibilities**:
-  - Department assignment
-  - Administrative role management
-  - Staff-specific validation
-
-#### DatabaseHandler Class
 - **Purpose**: Data persistence layer
-- **Responsibilities**:
-  - File I/O operations
-  - Data serialization/deserialization
-  - Error handling for file operations
-  - Data integrity maintenance
+- **Key Features**:
+  - File I/O operations for all person types
+  - Unified save/load system
+  - Error handling and validation
 
 #### Utility Class
-- **Purpose**: Helper functions and utilities
-- **Responsibilities**:
+- **Purpose**: Helper functions and UI formatting
+- **Key Features**:
+  - Console formatting and colors
   - Input validation
-  - String manipulation
-  - ID generation
-  - Common formatting operations
-
-## Code Organization
-
-### Directory Structure
-```
-├── include/               # Header files
-│   ├── Person.h          # Base class definition
-│   ├── Student.h         # Student class definition
-│   ├── Teacher.h         # Teacher class definition
-│   ├── Staff.h           # Staff class definition
-│   ├── Database_handler.h # Database operations
-│   └── Utility.h         # Helper functions
-├── src/                  # Implementation files
-│   ├── Person.cpp        # Base class implementation
-│   ├── Student.cpp       # Student class implementation
-│   ├── Teacher.cpp       # Teacher class implementation
-│   ├── Staff.cpp         # Staff class implementation
-│   ├── Database_handler.cpp # Database implementation
-│   ├── Utility.cpp       # Helper implementations
-│   └── start.cpp         # Main application entry
-├── tests/                # Unit tests
-│   ├── PersonTest.cpp    # Base class tests
-│   ├── StudentTest.cpp   # Student class tests
-│   ├── DatabaseTest.cpp  # Database operation tests
-│   └── UtilityTest.cpp   # Utility function tests
-├── data/                 # Data files (runtime)
-├── docs/                 # Documentation
-└── scripts/              # Build and utility scripts
-```
-
-### Header File Guidelines
-- Use include guards (`#ifndef`, `#define`, `#endif`)
-- Forward declarations where possible
-- Minimal includes in headers
-- Clear documentation for public interfaces
-
-### Source File Guidelines
-- Include corresponding header first
-- Group includes logically (system, project)
-- Implement all declared methods
-- Use appropriate namespaces
+  - Menu display systems
+  - Static-only design (no instantiation)
 
 ## Coding Standards
 
 ### Naming Conventions
-- **Classes**: PascalCase (e.g., `DatabaseHandler`)
+- **Classes**: PascalCase (e.g., `Person`, `DatabaseHandler`)
 - **Methods**: camelCase (e.g., `getName()`, `setAddress()`)
-- **Variables**: camelCase (e.g., `studentId`, `phoneNumber`)
+- **Variables**: camelCase (e.g., `id`, `phoneNumber`)
 - **Constants**: UPPER_SNAKE_CASE (e.g., `MAX_STUDENTS`)
 - **Files**: Match class names (e.g., `Person.h`, `Person.cpp`)
 
@@ -258,278 +198,88 @@ Person (Abstract Base Class)
 - **Indentation**: 4 spaces (no tabs)
 - **Braces**: Opening brace on same line
 - **Line Length**: Maximum 100 characters
-- **Comments**: Use `//` for single line, `/* */` for blocks
+- **Comments**: Use `//` for single line, `/* */` for multi-line
 
-### Best Practices
-1. **RAII**: Resource Acquisition Is Initialization
-2. **const-correctness**: Use const wherever possible
-3. **Exception Safety**: Handle errors gracefully
-4. **Memory Management**: Use smart pointers when appropriate
-5. **Single Responsibility**: Each class has one purpose
-
-### Example Code Style
-```cpp
-class Person {
-private:
-    string name;
-    int id;
-    string phone;
-    string address;
-
-public:
-    // Default constructor
-    Person();
-    
-    // Getters
-    string getName() const { return name; }
-    int getId() const { return id; }
-    
-    // Setters with validation
-    void setName(const string& newName);
-    void setId(int newId);
-    
-    // Virtual methods
-    virtual void displayInfo() const;
-};
-```
-
-## Build System
-
-### G++ Compilation
-The project uses direct G++ compilation for cross-platform building:
-
-```bash
-# Source files location
-SOURCES="src/Person.cpp src/Student.cpp src/Teacher.cpp src/Staff.cpp src/Database_handler.cpp src/Utility.cpp"
-INCLUDE_PATH="-Iinclude"
-
-# Main executable
-g++ -std=c++11 $INCLUDE_PATH src/start.cpp $SOURCES -o build/sms
-
-# Test executables
-g++ -std=c++11 $INCLUDE_PATH tests/UnitTest.cpp $SOURCES -o build/UnitTest
-g++ -std=c++11 $INCLUDE_PATH tests/IntegrationTest.cpp $SOURCES -o build/IntegrationTest
-```
-
-### Build Commands
-```bash
-# Debug build
-mkdir build
-g++ -g -std=c++11 -Wall -Wextra -Iinclude src/*.cpp -o build/sms
-
-# Release build
-g++ -O3 -DNDEBUG -std=c++11 -Iinclude src/*.cpp -o build/sms
-
-# Clean build
-rm -rf build/*
-```
-
-### Compiler Flags
-- **Debug**: `-g -O0 -Wall -Wextra`
-- **Release**: `-O3 -DNDEBUG`
-- **Warnings**: `-Wall -Wextra -Wpedantic`
+### Memory Management
+- Use RAII principles
+- Avoid raw pointers where possible
+- Always pair `new` with `delete`
+- Initialize all variables
+- Use smart pointers when appropriate
 
 ## Testing Framework
 
-### Unit Testing Structure
-Each major class has corresponding test files:
-
-#### Test Naming Convention
-- Test files: `ClassNameTest.cpp`
-- Test functions: `test_MethodName()`
-- Setup functions: `setUp()`, `tearDown()`
-
-#### Test Implementation Example
-```cpp
-// PersonTest.cpp
-#include <cassert>
-#include <iostream>
-#include "../include/Person.h"
-
-void test_PersonSettersAndGetters() {
-    Person person;
-    person.setName("John Doe");
-    person.setId(123);
-    
-    assert(person.getName() == "John Doe");
-    assert(person.getId() == 123);
-    std::cout << "✓ Person setters and getters test passed\n";
-}
-
-int main() {
-    test_PersonSettersAndGetters();
-    // ... other tests
-    return 0;
-}
+### Test Organization
+```
+tests/
+├── UnitTest.cpp          # Individual class tests
+└── IntegrationTest.cpp   # System workflow tests
 ```
 
-### Running Tests
+### Test Execution
 ```bash
-# Build and run all tests
+# Build tests
+g++ -std=c++11 -Iinclude tests/UnitTest.cpp src/Person.cpp src/Student.cpp src/Teacher.cpp src/Staff.cpp src/Utility.cpp -o build/UnitTest.exe
+
+# Run tests
 cd build
-make RunTests
-./RunTests
-
-# Run specific test
-./PersonTest
-./StudentTest
-./DatabaseTest
-./UtilityTest
+.\UnitTest.exe
+.\IntegrationTest.exe
 ```
 
-### Test Coverage Goals
-- **Unit Tests**: 90%+ code coverage
-- **Integration Tests**: Critical workflows
-- **Edge Cases**: Invalid inputs, boundary conditions
-- **Error Handling**: File I/O failures, memory issues
+### Test Guidelines
+- Test all public methods
+- Include edge cases and error conditions
+- Use descriptive test names
+- Keep tests independent
+- Verify both positive and negative scenarios
 
-## Contributing Guidelines
+## Development Workflow
 
-### Development Workflow
-1. **Fork** the repository
-2. **Create** a feature branch (`git checkout -b feature/new-feature`)
-3. **Implement** changes following coding standards
-4. **Add** appropriate tests
-5. **Run** all tests to ensure nothing breaks
-6. **Commit** with descriptive messages
-7. **Push** changes and create a pull request
+### Getting Started
+1. **Setup Environment**: Install C++ compiler and tools
+2. **Clone Repository**: Get latest codebase
+3. **Build Project**: Compile main application and tests
+4. **Run Tests**: Verify everything works correctly
+5. **Start Development**: Make changes and test iteratively
 
-### Commit Message Format
-```
-type(scope): description
+### Best Practices
+- **Test-Driven Development**: Write tests before implementation
+- **Code Reviews**: Review all changes before merging
+- **Documentation**: Keep docs updated with code changes
+- **Version Control**: Use meaningful commit messages
+- **Continuous Testing**: Run tests frequently during development
 
-[optional body]
-
-[optional footer]
-```
-
-**Types**: feat, fix, docs, style, refactor, test, chore
-
-**Examples**:
-```
-feat(student): add GPA validation in setter method
-fix(database): handle missing file gracefully
-docs(readme): update build instructions
-test(utility): add phone validation tests
-```
-
-### Code Review Process
-1. All changes require review
-2. Tests must pass
-3. Documentation must be updated
-4. No breaking changes without discussion
-
-### Branch Naming
-- `feature/feature-name`: New features
-- `bugfix/issue-description`: Bug fixes
-- `hotfix/critical-fix`: Critical issues
-- `docs/documentation-update`: Documentation changes
-
-## Debugging and Profiling
-
-### Debugging Techniques
-1. **Print Debugging**: Use `std::cout` for simple cases
-2. **GDB**: GNU Debugger for detailed analysis
-3. **Valgrind**: Memory leak detection (Linux/macOS)
-4. **Static Analysis**: Use tools like `cppcheck`
-
-### Common Debugging Scenarios
-```cpp
-// Memory debugging
-void debugMemoryUsage() {
-    std::cout << "Creating student object..." << std::endl;
-    Student* student = new Student();
-    std::cout << "Student created at: " << student << std::endl;
-    // ... use student
-    delete student;
-    std::cout << "Student deleted" << std::endl;
-}
-
-// File I/O debugging
-void debugFileOperations() {
-    std::ifstream file("data/students.txt");
-    if (!file.is_open()) {
-        std::cerr << "Failed to open file: " << strerror(errno) << std::endl;
-        return;
-    }
-    std::cout << "File opened successfully" << std::endl;
-}
-```
-
-### Performance Profiling
-- **Timing**: Use `<chrono>` for performance measurement
-- **Memory**: Monitor heap usage
-- **File I/O**: Track read/write operations
-
-## Deployment
-
-### Release Preparation
-1. **Version Tagging**: Use semantic versioning (e.g., v1.2.3)
-2. **Changelog**: Document all changes
-3. **Testing**: Full regression test suite
-4. **Documentation**: Update all documentation
-
-### Packaging
+### Common Tasks
 ```bash
-# Create release package
-mkdir release
-cp build/SchoolManagementSystem release/
-cp -r data release/
-cp README.md release/
-tar -czf SchoolManagementSystem-v1.0.0.tar.gz release/
+# Clean build
+rm -rf build/*
+mkdir -p build
+
+# Quick build and test
+g++ -std=c++11 -Iinclude src/*.cpp -o build/sms.exe && cd build && .\sms.exe
+
+# Debug build
+g++ -std=c++11 -g -Iinclude src/*.cpp -o build/sms_debug.exe
 ```
 
-### Distribution
-- **GitHub Releases**: Tagged releases with binaries
-- **Documentation**: Include user manual and API docs
-- **Dependencies**: List all requirements
+## Troubleshooting
 
-## Future Enhancements
-
-### Planned Features
-1. **Database Integration**: MySQL/SQLite support
-2. **GUI Interface**: Qt or web-based interface
-3. **Reporting System**: PDF generation
-4. **Multi-user Support**: User authentication
-5. **Network Features**: Client-server architecture
-
-### Architecture Improvements
-1. **Design Patterns**: Observer pattern for updates
-2. **Configuration**: JSON/XML configuration files
-3. **Logging**: Structured logging system
-4. **Validation**: Comprehensive data validation framework
-
-### Technology Upgrades
-1. **C++ Standards**: Migrate to C++17/20
-2. **Build System**: Advanced build automation scripts
-3. **Testing**: Google Test framework integration
-4. **CI/CD**: Automated testing and deployment
-
-### Performance Optimizations
-1. **Caching**: In-memory data caching
-2. **Indexing**: Fast search capabilities
-3. **Compression**: Data file compression
-4. **Multithreading**: Parallel operations
-
-### Security Enhancements
-1. **Encryption**: Data encryption at rest
-2. **Authentication**: User access control
-3. **Audit Logging**: Track all operations
-4. **Input Sanitization**: Prevent injection attacks
-
-## Troubleshooting Development Issues
-
-### Build Problems
-- **Missing Headers**: Check include paths with -I flag
-- **Linker Errors**: Verify library dependencies and object files
-- **Compilation Issues**: Clean build directory and recompile
+### Build Issues
+- **Missing Headers**: Check include paths with `-I` flag
+- **Linker Errors**: Verify all source files are included
+- **Compilation Errors**: Check C++11 compatibility
 
 ### Runtime Issues
-- **Segmentation Faults**: Use debugger to trace
-- **Memory Leaks**: Run with Valgrind
-- **File Permissions**: Check directory access rights
+- **Segmentation Faults**: Use debugger to trace memory issues
+- **File Access**: Ensure proper permissions for data directory
+- **Input Validation**: Check user input handling
 
-### IDE Problems
-- **IntelliSense**: Regenerate compile_commands.json
-- **Debugging**: Verify debug symbols are included
-- **Extensions**: Update C++ language extensions
+### Common Solutions
+- **Clean Build**: Delete build directory and recompile
+- **Check Dependencies**: Verify all source files are included
+- **Debug Mode**: Compile with `-g` flag for debugging symbols
+
+---
+
+**End of Developer Guide**
