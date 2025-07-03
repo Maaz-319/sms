@@ -42,20 +42,6 @@ The School Management System is a robust console application that allows educati
 - **File I/O**: Separate data files for each entity type
 - **Utility System**: Formatted console output with professional styling
 
-## 📋 System Requirements
-
-### Runtime Requirements (Pre-built Executable)
-- **OS**: Windows 7/10/11 (64-bit)
-- **RAM**: 128 MB minimum
-- **Storage**: 10 MB free space
-- **Display**: Console/Terminal support
-
-### Development Requirements (Source Compilation)
-- **Compiler**: GCC 7.0+ / MSVC 2017+ / Clang 6.0+
-- **C++ Standard**: C++11 or higher
-- **OS**: Windows, Linux, or macOS
-- **RAM**: 512 MB minimum (for compilation)
-
 ## 🚀 Quick Start
 
 ### Option 1: Run Pre-built Executable (Recommended)
@@ -85,6 +71,8 @@ cd build
 ```
 
 ### Option 3: Compile and Run Tests
+
+> This testing suite is AI Generated 😊
 
 ```bash
 # Compile unit tests

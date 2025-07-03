@@ -1,5 +1,7 @@
 # Test Documentation - School Management System
 
+> This testing suite is AI Generated 😊
+
 ## Overview
 
 This directory contains comprehensive test suites for the School Management System, designed to validate both individual components and system-wide integration. The tests are built to match the latest unified Person-based architecture with polymorphic operations and centralized ID management.
